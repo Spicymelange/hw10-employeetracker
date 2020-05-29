@@ -115,15 +115,14 @@ async function addEmployee() {
     obj.value = role[i].department_id;
     arr.push(obj);
   }
-  console.log(arr);
   const employee = await prompt([
     {
       name: "first_name",
-      message: "What is the employee's first name?",
+      message: "What is the employee's first name?"
     },
     {
       name: "last_name",
-      message: "What is the employee's last name?",
+      message: "What is the employee's last name?"
     },
     {
       type: "list",
@@ -139,6 +138,35 @@ async function addEmployee() {
   await db.addEmployee(employee.first_name, employee.last_name, employee.role_id, employee.manager_id);
   console.log("employee added");
 }
+
+//get employees done
+async function getEmployees() {
+  const employees = await db.getEmployees();
+  console.table(employees);
+}
+
+//delete an employee done
+async function delEmployee() {
+  const employees = await db.getEmployees();
+  const arr = [];
+  for (let i = 0; i < employees.length; i++) {
+    let obj = {};
+    obj.name = employees[i].first_name + " " + employees[i].last_name;
+    obj.value = employees[i].id;
+    arr.push(obj);
+  }
+  console.log(arr);
+  const employee = await prompt([
+    {
+      type: "list",
+      name: "employee",
+      message: "Which employee do you want to delete?",
+      choices: arr
+    }
+  ]);
+  await db.delEmployee(employee.employee);
+  console.log(employee.employee + "employee deleted");
+}
 // getDepts();
 // addDept();
 // delDept();
@@ -146,9 +174,9 @@ async function addEmployee() {
 // addRole();
 // delRole();
 // addEmployee();
-// get
-//which queries should have seperate files?
-//view employees
+// getEmployees();
+delEmployee();
+
 //view employees by department (Join?)
 //view employees by role (Join?)
 //update employee role

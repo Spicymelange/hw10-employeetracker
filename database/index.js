@@ -41,7 +41,9 @@ class DB {
     return this.connection.query("DELETE FROM role WHERE title = (?)", title);
   }
 
-  getEmployees() {}
+  getEmployees() {
+    return this.connection.query("SELECT * FROM employee");
+  }
 
   addEmployee(first_name, last_name, role_id, manager_id) {
     return this.connection.query(
@@ -50,7 +52,14 @@ class DB {
     );
   }
 
-  delEmployee() {}
+    delEmployee(emp_id) {
+      var queryStr =
+        "DELETE FROM employee WHERE id = ?";
+    return this.connection.query(
+      queryStr,
+      [emp_id]
+    );
+  }
 
   updateEmployee() {
     //naming? can this update emp's manager and role?
