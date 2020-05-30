@@ -1,10 +1,110 @@
 const { prompt } = require("inquirer");
 const cTable = require("console.table");
 const db = require("./database");
+const logo = require("asciiart-logo");
+
+init();
+
+// Display logo text, load main prompts
+function init() {
+  // Utilize asciiart-logo
+  const logoText = logo({ name: "Employee Manager" }).render();
+
+  console.log(logoText);
+
+  loadMainPrompts();
+}
+
+async function loadMainPrompts() {
+  const { choice } = await prompt([
+    {
+      type: "list",
+      name: "choice",
+      message: "What would you like to do?",
+      choices: [
+        {
+          name: "View all Roles",
+          value: "VIEW_ROLES",
+        },
+        {
+          name: "Add a Role",
+          value: "ADD_ROLE",
+        },
+        {
+          name: "Delete a Role",
+          value: "DELETE_ROLE",
+        },
+        {
+          name: "View all Departments",
+          value: "VIEW_DEPARTMENTS",
+        },
+        {
+          name: "Add a Department",
+          value: "ADD_DEPARTMENT",
+        },
+        {
+          name: "Delete a Department",
+          value: "DELETE_DEPARTMENT",
+        },
+        {
+          name: "View all Employees",
+          value: "VIEW_EMPLOYEES",
+        },
+        {
+          name: "Add an Employee",
+          value: "ADD_EMPLOYEE",
+        },
+        {
+          name: "Delete an Employee",
+          value: "DELETE_EMPLOYEE",
+        },
+        {
+          name: "Update Employee Role",
+          value: "UPDATE_EMPLOYEE_ROLE",
+        },
+
+        // Quit
+        {
+          name: "Quit",
+          value: "QUIT",
+        },
+      ],
+    },
+  ]);
+
+  // Call the appropriate function depending on what the user chose
+  switch (choice) {
+    case "VIEW_DEPARTMENTS":
+      return getDepts();
+    case "ADD_DEPARTMENT":
+      return addDept();
+    case "DELETE_DEPARTMENT":
+      return delDept();
+    case "VIEW_ROLES":
+      return getRoles();
+    case "ADD_ROLE":
+      return addRole();
+    case "DELETE_ROLE":
+      return delRole();
+    case "VIEW_EMPLOYEES":
+      return getEmployees();
+    case "ADD_EMPLOYEE":
+      return addEmployee();
+    case "DELETE_EMPLOYEE":
+      return delEmployee();
+    case "UPDATE_EMPLOYEE_ROLE":
+      return updateEmployeeRole();
+    case "QUIT":
+      return quit();
+    // QUIT
+    default:
+      return loadMainPrompts();
+  }
+}
 
 //get dept done
-async function getDepts(dept) {
-  const department = await db.getDepts(dept);
+async function getDepts() {
+  const department = await db.getDepts();
   console.table(department);
 }
 //add dept done, working okay, connection consoles after prompt renders
@@ -12,15 +112,15 @@ async function addDept() {
   const newDept = await prompt([
     {
       name: "name",
-      message: "What is the name of the department?"
-    }
+      message: "What is the name of the department?",
+    },
   ]);
   await db.addDept(newDept.name);
-  console.log(newDept.name + " added to departments")
+  console.log(newDept.name + " added to departments");
 }
 
 //delete dept done
-async function delDept(obj) {
+async function delDept() {
   const departments = await db.getDepts();
   const arr = [];
   for (let i = 0; i < departments.length; i++) {
@@ -34,12 +134,12 @@ async function delDept(obj) {
       type: "list",
       name: "dept_name",
       message: "Which department do you want to delete?",
-      choices: arr
-    }
+      choices: arr,
+    },
   ]);
   console.log(department.dept_name);
   await db.delDept(department.dept_name);
-  console.table(department.dept_name + " department deleted");
+  console.log(department.dept_name + " department deleted");
   getDepts();
 }
 
@@ -73,8 +173,8 @@ async function addRole() {
       type: "list",
       name: "department_id",
       message: "Which department does the role belong to?",
-      choices: arr
-    }
+      choices: arr,
+    },
   ]);
   console.log(arr);
   console.log(role.department_id);
@@ -96,15 +196,15 @@ async function delRole() {
       type: "list",
       name: "role_name",
       message: "Which role do you want to delete?",
-      choices: arr
-    }
+      choices: arr,
+    },
   ]);
   console.log(department.role_name);
   await db.delRole(department.role_name);
   console.table(department.role_name + " role deleted");
   getRoles();
 }
-  
+
 //Add employee done
 async function addEmployee() {
   const role = await db.getRoles();
@@ -118,24 +218,29 @@ async function addEmployee() {
   const employee = await prompt([
     {
       name: "first_name",
-      message: "What is the employee's first name?"
+      message: "What is the employee's first name?",
     },
     {
       name: "last_name",
-      message: "What is the employee's last name?"
+      message: "What is the employee's last name?",
     },
     {
       type: "list",
       name: "role_id",
       message: "What is the role?",
-      choices: arr
+      choices: arr,
     },
     {
       name: "manager_id",
-      message: "What is their manager's id number?"
-    }
+      message: "What is their manager's id number?",
+    },
   ]);
-  await db.addEmployee(employee.first_name, employee.last_name, employee.role_id, employee.manager_id);
+  await db.addEmployee(
+    employee.first_name,
+    employee.last_name,
+    employee.role_id,
+    employee.manager_id
+  );
   console.log("employee added");
 }
 
@@ -161,8 +266,8 @@ async function delEmployee() {
       type: "list",
       name: "employee",
       message: "Which employee do you want to delete?",
-      choices: arr
-    }
+      choices: arr,
+    },
   ]);
   await db.delEmployee(employee.employee);
   console.log(employee.employee + "employee deleted");
@@ -188,7 +293,7 @@ async function updateEmployeeRole() {
     },
   ]);
   console.log(employee.employee);
-  const empToUpdate = employee.employee;//empId var
+  const empToUpdate = employee.employee; //empId var
   const roles = await db.getRoles();
   const arr2 = [];
   for (let i = 0; i < roles.length; i++) {
@@ -209,7 +314,7 @@ async function updateEmployeeRole() {
   const newRole = role.role;
   console.log("newRole" + role.role);
   await db.updateEmployeeRole(newRole, empToUpdate);
-  console.log("Employee role updated.")
+  console.log("Employee role updated.");
 }
 // getDepts();
 // addDept();
@@ -220,7 +325,7 @@ async function updateEmployeeRole() {
 // addEmployee();
 // getEmployees();
 // delEmployee();
-updateEmployeeRole();
+// updateEmployeeRole();
 //view employees by department (Join?)
 //view employees by role (Join?)
 //update employee role
