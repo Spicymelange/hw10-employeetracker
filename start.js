@@ -316,21 +316,12 @@ async function updateEmployeeRole() {
   await db.updateEmployeeRole(newRole, empToUpdate);
   console.log("Employee role updated.");
 }
-// getDepts();
-// addDept();
-// delDept();
-// getRoles();
-// addRole();
-// delRole();
-// addEmployee();
-// getEmployees();
-// delEmployee();
-// updateEmployeeRole();
-//view employees by department (Join?)
-//view employees by role (Join?)
-//update employee role
-//bonus
-//update empoyee managers
+
+function quit() {
+  console.log("Goodbye!");
+  process.exit();
+}
+
 //view employees by managers (Join?)
 //delete departments, roles, employees
 //call in inquirer when needed
