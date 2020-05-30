@@ -167,6 +167,50 @@ async function delEmployee() {
   await db.delEmployee(employee.employee);
   console.log(employee.employee + "employee deleted");
 }
+
+//update employee
+async function updateEmployeeRole() {
+  const employees = await db.getEmployees();
+  const arr = [];
+  for (let i = 0; i < employees.length; i++) {
+    let obj = {};
+    obj.name = employees[i].first_name + " " + employees[i].last_name;
+    obj.value = employees[i].id;
+    arr.push(obj);
+  }
+  console.log(arr);
+  const employee = await prompt([
+    {
+      type: "list",
+      name: "employee",
+      message: "Which employee's role do you want to update?",
+      choices: arr,
+    },
+  ]);
+  console.log(employee.employee);
+  const empToUpdate = employee.employee;//empId var
+  const roles = await db.getRoles();
+  const arr2 = [];
+  for (let i = 0; i < roles.length; i++) {
+    let obj = {};
+    obj.name = roles[i].title;
+    obj.value = roles[i].id;
+    arr2.push(obj);
+  }
+  console.log(arr2);
+  const role = await prompt([
+    {
+      type: "list",
+      name: "role",
+      message: "What role do you want to assign to this employee?",
+      choices: arr2,
+    },
+  ]);
+  const newRole = role.role;
+  console.log("newRole" + role.role);
+  await db.updateEmployeeRole(newRole, empToUpdate);
+  console.log("Employee role updated.")
+}
 // getDepts();
 // addDept();
 // delDept();
@@ -175,8 +219,8 @@ async function delEmployee() {
 // delRole();
 // addEmployee();
 // getEmployees();
-delEmployee();
-
+// delEmployee();
+updateEmployeeRole();
 //view employees by department (Join?)
 //view employees by role (Join?)
 //update employee role

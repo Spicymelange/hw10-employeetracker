@@ -52,17 +52,17 @@ class DB {
     );
   }
 
-    delEmployee(emp_id) {
-      var queryStr =
-        "DELETE FROM employee WHERE id = ?";
-    return this.connection.query(
-      queryStr,
-      [emp_id]
-    );
+  delEmployee(emp_id) {
+    var queryStr = "DELETE FROM employee WHERE id = ?";
+    return this.connection.query(queryStr, [emp_id]);
   }
 
-  updateEmployee() {
-    //naming? can this update emp's manager and role?
+  updateEmployeeRole(role_id, emp_id) {
+    //pass the new role_id and emp id
+    connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [
+      role_id,
+      emp_id,
+    ]);
   }
 }
 module.exports = new DB(connection);
