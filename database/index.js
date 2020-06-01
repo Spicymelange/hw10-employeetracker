@@ -30,13 +30,29 @@ class DB {
     return this.connection.query("SELECT * FROM role");
   }
 
-  addRole(title, salary, deptId) {
-    return this.connection.query(
-      "INSERT INTO role (title, salary, department_id) VALUES (?,?,?)",
-      [title, salary, deptId]
-    );
+  async validateRole(title) {
+    const roles = await this.getRoles();
+    for (let i = 0; i < roles.length; i++) {
+      const element = roles[i].title;
+      if (title !== element) {
+        return true;
+      }
+      else { return false; }
+    }
   }
 
+  addRole(title, salary, deptId) {
+    try {
+      return this.connection.query(
+        "INSERT INTO role (title, salary, department_id) VALUES (?,?,?)",
+        [title, salary, deptId]
+      );
+    }
+    catch {
+      
+    }
+  }
+    
   delRole(title) {
     return this.connection.query("DELETE FROM role WHERE title = (?)", title);
   }
