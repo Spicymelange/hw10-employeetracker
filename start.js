@@ -3,9 +3,9 @@ const cTable = require("console.table");
 const db = require("./database");
 const logo = require("asciiart-logo");
 
-// init();
+init();
 // getRoles();
-addRole();
+// addRole();
 // validateRoles();
 // Display logo text, load main prompts
 function init() {
