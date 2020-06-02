@@ -48,8 +48,8 @@ class DB {
         [title, salary, deptId]
       );
     }
-    catch {
-      
+    catch (err) {
+      console.log(err);
     }
   }
     

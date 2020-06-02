@@ -2,7 +2,19 @@ const { prompt } = require("inquirer");
 const cTable = require("console.table");
 const db = require("./database");
 const logo = require("asciiart-logo");
+const EventEmitter = require("events");
 
+class MyEmitter extends EventEmitter {}
+
+const myEmitter = new MyEmitter();
+// increase the limit
+myEmitter.setMaxListeners(20);
+
+for (let i = 0; i < 11; i++) {
+  myEmitter.on("event", (_) => console.log(i));
+}
+
+myEmitter.emit("event");
 init();
 // getRoles();
 // addRole();
@@ -173,13 +185,14 @@ async function addRole() {
       validate: async function (value) {
         let roles = await db.getRoles();
         for (let i = 0; i < roles.length; i++) {
-          if (value !== roles[i]) {
-            return true;
+          if (value === roles[i].title) {
+            return console.log("...This role already exists. Enter 'quit' to return to the main menu.");
           }
-          else {
-            return false;
+          else if (value === "quit") {
+            loadMainPrompts();
           }
         }
+         return true;
       }
     },
     {
