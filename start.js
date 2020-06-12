@@ -2,23 +2,19 @@ const { prompt } = require("inquirer");
 const cTable = require("console.table");
 const db = require("./database");
 const logo = require("asciiart-logo");
-const EventEmitter = require("events");
 
-class MyEmitter extends EventEmitter {}
-
-const myEmitter = new MyEmitter();
-// increase the limit
-myEmitter.setMaxListeners(20);
-
-for (let i = 0; i < 11; i++) {
-  myEmitter.on("event", (_) => console.log(i));
-}
-
-myEmitter.emit("event");
 init();
-// getRoles();
-// addRole();
-// validateRoles();
+
+// const myEmitter = new myemitter();
+// // increase the limit
+// myEmitter.setMaxListeners(20);
+
+// for (let i = 0; i < 11; i++) {
+//   myEmitter.on("event", (_) => console.log(i));
+// }
+
+// myEmitter.emit("event");
+
 // Display logo text, load main prompts
 function init() {
   // Utilize asciiart-logo
@@ -38,52 +34,52 @@ async function loadMainPrompts() {
       choices: [
         {
           name: "View all Roles",
-          value: "VIEW_ROLES",
+          value: "VIEW_ROLES"
         },
         {
           name: "Add a Role",
-          value: "ADD_ROLE",
+          value: "ADD_ROLE"
         },
         {
           name: "Delete a Role",
-          value: "DELETE_ROLE",
+          value: "DELETE_ROLE"
         },
         {
           name: "View all Departments",
-          value: "VIEW_DEPARTMENTS",
+          value: "VIEW_DEPARTMENTS"
         },
         {
           name: "Add a Department",
-          value: "ADD_DEPARTMENT",
+          value: "ADD_DEPARTMENT"
         },
         {
           name: "Delete a Department",
-          value: "DELETE_DEPARTMENT",
+          value: "DELETE_DEPARTMENT"
         },
         {
           name: "View all Employees",
-          value: "VIEW_EMPLOYEES",
+          value: "VIEW_EMPLOYEES"
         },
         {
           name: "Add an Employee",
-          value: "ADD_EMPLOYEE",
+          value: "ADD_EMPLOYEE"
         },
         {
           name: "Delete an Employee",
-          value: "DELETE_EMPLOYEE",
+          value: "DELETE_EMPLOYEE"
         },
         {
           name: "Update Employee Role",
-          value: "UPDATE_EMPLOYEE_ROLE",
+          value: "UPDATE_EMPLOYEE_ROLE"
         },
 
         // Quit
         {
           name: "Quit",
-          value: "QUIT",
-        },
-      ],
-    },
+          value: "QUIT"
+        }
+      ]
+    }
   ]);
 
   // Call the appropriate function depending on what the user chose
@@ -119,6 +115,7 @@ async function loadMainPrompts() {
 //get dept done
 async function getDepts() {
   const department = await db.getDepts();
+  console.log("\n");
   console.table(department);
   loadMainPrompts();
 }
@@ -127,8 +124,8 @@ async function addDept() {
   const newDept = await prompt([
     {
       name: "name",
-      message: "What is the name of the department?",
-    },
+      message: "What is the name of the department?"
+    }
   ]);
   await db.addDept(newDept.name);
   console.log(newDept.name + " added to departments");
@@ -144,16 +141,14 @@ async function delDept() {
     obj.name = departments[i].name;
     arr.push(obj);
   }
-  console.log(arr);
   const department = await prompt([
     {
       type: "list",
       name: "dept_name",
       message: "Which department do you want to delete?",
-      choices: arr,
-    },
+      choices: arr
+    }
   ]);
-  console.log(department.dept_name);
   await db.delDept(department.dept_name);
   console.log(department.dept_name + " department deleted");
   getDepts();
@@ -163,6 +158,7 @@ async function delDept() {
 //Show all roles done
 async function getRoles() {
   const roles = await db.getRoles();
+  console.log("\n");
   console.table(roles);
   loadMainPrompts();
 }
@@ -181,19 +177,20 @@ async function addRole() {
     {
       message: "What is the name of the role?",
       type: "input",
-      name: "title",
-      validate: async function (value) {
-        let roles = await db.getRoles();
-        for (let i = 0; i < roles.length; i++) {
-          if (value === roles[i].title) {
-            return console.log("...This role already exists. Enter 'quit' to return to the main menu.");
-          }
-          else if (value === "quit") {
-            loadMainPrompts();
-          }
-        }
-         return true;
-      }
+      name: "title"
+      // validate: async function (value) {
+      //   let roles = await db.getRoles();
+      //   for (let i = 0; i < roles.length; i++) {
+      //     if (value === roles[i].title) {
+      //       return console.log(
+      //         "...This role already exists. Enter 'quit' to return to the main menu."
+      //       );
+      //     } else if (value === "quit") {
+      //       loadMainPrompts();
+      //     }
+      //   }
+      //   return true;
+      // }
     },
     {
       name: "salary",
@@ -204,11 +201,11 @@ async function addRole() {
       name: "department_id",
       message: "Which department does the role belong to?",
       choices: arr
-    },
+    }
   ]);
-    await db.addRole(role.title, role.salary, role.department_id);
-    console.log(role.title + "role added");
-    loadMainPrompts();
+  await db.addRole(role.title, role.salary, role.department_id);
+  console.log(role.title + " role added");
+  loadMainPrompts();
 }
 //delete role done
 async function delRole() {
@@ -225,8 +222,8 @@ async function delRole() {
       type: "list",
       name: "role_name",
       message: "Which role do you want to delete?",
-      choices: arr,
-    },
+      choices: arr
+    }
   ]);
   await db.delRole(department.role_name);
   console.table(department.role_name + " role deleted");
@@ -247,22 +244,22 @@ async function addEmployee() {
   const employee = await prompt([
     {
       name: "first_name",
-      message: "What is the employee's first name?",
+      message: "What is the employee's first name?"
     },
     {
       name: "last_name",
-      message: "What is the employee's last name?",
+      message: "What is the employee's last name?"
     },
     {
       type: "list",
       name: "role_id",
       message: "What is the role?",
-      choices: arr,
+      choices: arr
     },
     {
       name: "manager_id",
-      message: "What is their manager's id number?",
-    },
+      message: "What is their manager's id number?"
+    }
   ]);
   await db.addEmployee(
     employee.first_name,
@@ -277,6 +274,7 @@ async function addEmployee() {
 //get employees done
 async function getEmployees() {
   const employees = await db.getEmployees();
+  console.log("\n");
   console.table(employees);
   loadMainPrompts();
 }
@@ -297,8 +295,8 @@ async function delEmployee() {
       type: "list",
       name: "employee",
       message: "Which employee do you want to delete?",
-      choices: arr,
-    },
+      choices: arr
+    }
   ]);
   await db.delEmployee(employee.employee);
   console.log(employee.employee + "employee deleted");
@@ -321,8 +319,8 @@ async function updateEmployeeRole() {
       type: "list",
       name: "employee",
       message: "Which employee's role do you want to update?",
-      choices: arr,
-    },
+      choices: arr
+    }
   ]);
   console.log(employee.employee);
   const empToUpdate = employee.employee; //empId var
@@ -340,8 +338,8 @@ async function updateEmployeeRole() {
       type: "list",
       name: "role",
       message: "What role do you want to assign to this employee?",
-      choices: arr2,
-    },
+      choices: arr2
+    }
   ]);
   const newRole = role.role;
   console.log("newRole" + role.role);
